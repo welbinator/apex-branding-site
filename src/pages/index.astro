@@ -31,6 +31,10 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
           <span class="rurl" id="rurl"></span>
           <span class="score" id="score"></span>
         </div>
+        <div id="cats" class="cats"></div>
+        <div id="vitals" class="vitals-wrap"></div>
+        <div id="field" class="field-wrap"></div>
+        <div id="opps" class="opps-wrap"></div>
         <div id="rows"></div>
         <div class="cta-card">
           <h3>Want it fixed?</h3>
@@ -81,7 +85,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   </footer>
 </Layout>
 
-<style>
+<style is:global>
   header{border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(255,255,255,.9);backdrop-filter:blur(8px);z-index:20}
   .nav{display:flex;align-items:center;justify-content:space-between;height:66px}
   .mark{display:flex;align-items:center;gap:9px;font-weight:700;font-size:19px;text-decoration:none}
@@ -114,6 +118,30 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   .row p{font-size:13.5px;color:var(--mute)}
   .cta-card{background:var(--ink);color:#fff;border-radius:6px;padding:22px;text-align:center;margin-top:16px}
   .cta-card h3{font-size:18px;margin-bottom:6px}
+
+  /* --- deep audit sections --- */
+  .cats{display:grid;grid-template-columns:1fr 1fr;gap:12px 20px;margin-bottom:22px}
+  .cat-top{display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:5px}
+  .cat-top b{font-size:14px}
+  .bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+  .fill{height:100%;border-radius:3px;transition:width .7s ease}
+  .sec-lbl{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin:18px 0 11px}
+  .sec-lbl span{font-weight:500;text-transform:none;letter-spacing:0;opacity:.75}
+  .vitals{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+  .vital{background:#fff;border:1px solid var(--line);border-radius:6px;padding:13px 12px;position:relative}
+  .vdot{width:8px;height:8px;border-radius:50%;position:absolute;top:13px;right:12px}
+  .vval{font-family:var(--font-display);font-size:20px;font-weight:700}
+  .vname{font-size:12px;font-weight:600;margin-top:2px}
+  .vhelp{font-size:11.5px;color:var(--mute);margin-top:3px;line-height:1.35}
+  .field{display:flex;flex-wrap:wrap;gap:8px}
+  .fchip{font-size:13px;background:#fff;border:1px solid var(--line);border-left-width:3px;border-radius:5px;padding:8px 12px;display:flex;align-items:center;gap:7px}
+  .fchip b{font-family:var(--font-display)}
+  .fdot{width:7px;height:7px;border-radius:50%;display:inline-block}
+  .opp{background:#fff;border:1px solid var(--line);border-radius:6px;padding:12px 15px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .opp-t{font-size:14px;font-weight:500}
+  .opp-s{font-size:12.5px;font-weight:700;color:var(--accent);white-space:nowrap}
+  #rows{margin-top:18px}
+  @media(max-width:560px){.cats{grid-template-columns:1fr}.vitals{grid-template-columns:1fr 1fr}.opp{flex-direction:column;align-items:flex-start;gap:4px}}
   .cta-card p{color:#aab2c0;font-size:14px;margin-bottom:15px}
   .btn-accent{display:inline-block;background:var(--accent);color:#fff!important;text-decoration:none;font-weight:600;font-size:14px;padding:11px 22px;border-radius:4px}
   .btn-accent:hover{filter:brightness(1.1)}
@@ -167,14 +195,56 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
   function normalize(u){u=u.trim();if(!u)return '';if(!/^https?:\/\//i.test(u))u='https://'+u;return u;}
   function icon(k){return k==='good'?'✓':k==='warn'?'~':'!';}
+  function lvlColor(k){return k==='good'?'var(--good)':k==='warn'?'var(--warn)':'var(--bad)';}
+
   function render(data){
     document.getElementById('rurl').textContent=data.url;
     const s=document.getElementById('score');
-    s.textContent='Health score: '+data.score+' / 100';
-    s.style.color=data.score>=80?'var(--good)':data.score>=50?'var(--warn)':'var(--bad)';
-    rows.innerHTML=data.findings.map(f=>
+    s.textContent='Overall: '+data.score+' / 100';
+    s.style.color=lvlColor(data.score>=80?'good':data.score>=50?'warn':'bad');
+
+    // Category score bars
+    document.getElementById('cats').innerHTML=(data.categories||[]).map(c=>{
+      const v=c.score==null?'—':c.score;
+      return `<div class="cat">
+        <div class="cat-top"><span>${c.label}</span><b style="color:${lvlColor(c.level)}">${v}</b></div>
+        <div class="bar"><div class="fill" style="width:${c.score==null?0:c.score}%;background:${lvlColor(c.level)}"></div></div>
+      </div>`;
+    }).join('');
+
+    // Core Web Vitals (lab)
+    const vw=document.getElementById('vitals');
+    if((data.vitals||[]).length){
+      vw.innerHTML=`<div class="sec-lbl">Core Web Vitals <span>(lab test)</span></div>
+        <div class="vitals">`+data.vitals.map(v=>
+        `<div class="vital"><div class="vdot" style="background:${lvlColor(v.level)}"></div>
+          <div class="vval">${v.value||'—'}</div>
+          <div class="vname">${v.name}</div>
+          <div class="vhelp">${v.help}</div></div>`).join('')+`</div>`;
+    } else vw.innerHTML='';
+
+    // Real-user field data
+    const fw=document.getElementById('field');
+    if(data.hasField && (data.field||[]).length){
+      fw.innerHTML=`<div class="sec-lbl">Real visitor experience <span>(Chrome user data, last 28 days)</span></div>
+        <div class="field">`+data.field.map(f=>
+        `<div class="fchip" style="border-color:${lvlColor(f.level)}">
+          <span class="fdot" style="background:${lvlColor(f.level)}"></span>${f.name}: <b>${f.value}</b></div>`).join('')+`</div>`;
+    } else fw.innerHTML='';
+
+    // Fix opportunities
+    const ow=document.getElementById('opps');
+    if((data.opportunities||[]).length){
+      ow.innerHTML=`<div class="sec-lbl">Biggest fixes available <span>(estimated gains)</span></div>`+
+        data.opportunities.map(o=>
+        `<div class="opp"><div class="opp-t">${o.title}</div><div class="opp-s">${o.savings}</div></div>`).join('');
+    } else ow.innerHTML='';
+
+    // Pass/fail findings
+    document.getElementById('rows').innerHTML=(data.findings||[]).map(f=>
       `<div class="row"><div class="icn ${f.level}">${icon(f.level)}</div><div><h4>${f.title}</h4><p>${f.detail}</p></div></div>`
     ).join('');
+
     report.hidden=false;
     report.scrollIntoView({behavior:'smooth',block:'start'});
   }
