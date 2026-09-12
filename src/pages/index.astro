@@ -5,26 +5,71 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 <Layout>
   <header>
     <div class="wrap nav">
-      <a class="mark" href={base + '/'}><span class="dot"></span>APEX</a>
+      <a class="mark" href={base + '/'}><span class="dot"></span>JAMES<span class="mk-thin">WELBES</span></a>
       <nav>
-        <a href="#process">Process</a>
-        <a href="#escape">Escape WP</a>
+        <a href="#thesis">The idea</a>
+        <a href="#about">About</a>
+        <a href="#work">Work</a>
         <a href="#audit" class="btn">Free audit</a>
       </nav>
     </div>
   </header>
 
-  <!-- HERO: tool-first -->
+  <!-- HERO -->
   <section class="hero">
+    <div class="glow"></div>
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <div class="eyebrow rise">One human · commanding AI</div>
+        <h1 class="rise">One human.<br>An army of <span class="hl">AI agents</span>.<br>Zero BS.</h1>
+        <p class="lead rise">I'm James Welbes. For over a decade I've built websites and led products by hand. Now I do it with a swarm of AI working under me — the judgment of a human, the horsepower of a machine. That's a combination almost nobody offers, and it's exactly what your project needs.</p>
+        <div class="hero-cta rise">
+          <a href="#audit" class="btn-accent">Audit my site free →</a>
+          <a href="#thesis" class="btn-ghost">Why this works</a>
+        </div>
+      </div>
+      <div class="hero-photo rise">
+        <img src={base + '/img/james.webp'} width="1256" height="838" alt="James Welbes holding a cap that reads 'I love BS — Brand Strategy'" />
+      </div>
+    </div>
+  </section>
+
+  <!-- THESIS: the AI + human argument -->
+  <section id="thesis" class="thesis">
     <div class="wrap">
-      <div class="eyebrow">Free · No signup · Results in seconds</div>
-      <h1>Is your website quietly costing you customers?</h1>
-      <p class="lead">Paste your URL. We'll run a real performance check and show you exactly what's slow, broken, or invisible to Google — honestly, and for free.</p>
-      <form class="tool" id="auditForm">
+      <div class="k rise" style="color:#8fa4ff">The idea</div>
+      <h2 class="rise th-h">Pure AI is reckless. One person is capped.<br>The magic is a human <span class="hl">in command</span> of AI.</h2>
+      <div class="tri">
+        <div class="tcard rise">
+          <div class="tlabel bad-l">100% AI</div>
+          <h3>Fast, but reckless</h3>
+          <p>AI alone is confident and wrong at scale. No taste, no accountability, no idea when it's quietly breaking your business. It'll ship you garbage at lightning speed.</p>
+        </div>
+        <div class="tcard rise">
+          <div class="tlabel warn-l">One human</div>
+          <h3>Careful, but capped</h3>
+          <p>A single person brings judgment and craft — but there are only so many hours in a day. Good work, slowly, and expensively. Everyone hits the same ceiling.</p>
+        </div>
+        <div class="tcard feature rise">
+          <div class="tlabel good-l">Human + AI</div>
+          <h3>Both. That's me.</h3>
+          <p>I steer a fleet of AI agents that do the heavy lifting, then I apply the taste, the judgment, and the accountability a machine will never have. Speed <em>and</em> sense.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AUDIT TOOL: reframed as proof -->
+  <section id="audit" class="audit">
+    <div class="wrap">
+      <div class="k rise" style="color:var(--accent)">Proof, not promises</div>
+      <h2 class="rise">See it work. Right now, on your own site.</h2>
+      <p class="lead rise audit-lead">This is the human-plus-AI approach in miniature: my tool runs a real, deep performance analysis in seconds — then hands you a plain-English read on what's actually costing you customers. No signup. No spin.</p>
+      <form class="tool rise" id="auditForm">
         <input id="url" type="text" inputmode="url" autocomplete="off" placeholder="yourbusiness.com" aria-label="Your website URL" />
         <button type="submit" id="auditBtn">Audit my site</button>
       </form>
-      <div class="hint" id="hint">No email required. We just want you to see the truth.</div>
+      <div class="hint" id="hint">Free. No email. Just the truth about your site.</div>
 
       <div id="report" class="report" hidden>
         <div class="rhead">
@@ -37,142 +82,209 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         <div id="opps" class="opps-wrap"></div>
         <div id="rows"></div>
         <div class="cta-card">
-          <h3>Want it fixed?</h3>
-          <p>We rebuild sites like this in days — fast, secure, mobile-first. Book a free 15-minute call.</p>
-          <a href="#escape" class="btn-accent">Book my call →</a>
+          <h3>Want it fixed — properly?</h3>
+          <p>This is the easy part. I rebuild sites like yours fast, secure, and mobile-first — then hand you something that actually earns its keep. Let's talk.</p>
+          <a href="#about" class="btn-accent">See how I work →</a>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- METRICS -->
-  <div class="wrap">
-    <div class="metrics rise">
-      <div class="metric"><div class="n">0.4s</div><div class="l">Average load time we ship</div></div>
-      <div class="metric"><div class="n">100</div><div class="l">Lighthouse performance target</div></div>
-      <div class="metric"><div class="n">24</div><div class="l">Small businesses live &amp; managed</div></div>
-    </div>
-  </div>
-
-  <!-- PROCESS -->
-  <section id="process">
-    <div class="wrap">
-      <div class="k rise">How we work</div>
-      <h2 class="rise">A studio that runs like a system, not a freelancer.</h2>
-      <div class="grid3">
-        <div class="cell rise"><div class="num">01</div><h3>Honest audit first</h3><p>We show you exactly what's slow, broken, or invisible to Google — before you pay a dollar.</p></div>
-        <div class="cell rise"><div class="num">02</div><h3>Built on flat-file</h3><p>Astro &amp; Statamic, not WordPress. Nothing to hack, nothing to patch, nothing to slow it down.</p></div>
-        <div class="cell rise"><div class="num">03</div><h3>Your own command center</h3><p>Every client gets a private dashboard: staging preview, request pipeline, approval loop. Organized from day one.</p></div>
+  <!-- ABOUT -->
+  <section id="about" class="about">
+    <div class="wrap about-grid">
+      <div class="about-photo rise">
+        <img src={base + '/img/james.webp'} width="1256" height="838" alt="James Welbes" loading="lazy" />
+      </div>
+      <div class="rise">
+        <div class="k" style="color:#8fa4ff">Who's actually in charge</div>
+        <h2 class="about-h">A decade of doing this by hand — now amplified.</h2>
+        <p class="about-p">I've worn every hat in this business: agency owner, developer, product owner, and yes, the video-tutorial guy. As former Product Owner at StellarWP (Liquid Web), I owned roadmaps and shipped real software used by thousands of sites.</p>
+        <p class="about-p">That experience is the part AI can't fake. I know what "done right" looks like, I know where projects quietly rot, and I know when the machine is confidently wrong. So I let AI do what it's great at — volume, speed, tireless iteration — and I stay the human who's accountable for the result.</p>
+        <ul class="creds">
+          <li><b>10+ years</b> in the web &amp; WordPress ecosystem</li>
+          <li><b>Ex-Product Owner</b>, StellarWP / Liquid Web</li>
+          <li><b>Agency owner</b> since 2015 · Cedar Rapids, Iowa</li>
+          <li><b>Real software shipped</b> — plugins, MVPs, products in market</li>
+        </ul>
       </div>
     </div>
   </section>
 
-  <!-- MANIFESTO / ESCAPE -->
-  <div class="band" id="escape">
+  <!-- WORK -->
+  <section id="work" class="work">
     <div class="wrap">
-      <div class="k rise" style="color:#8fa4ff">Escape from WordPress</div>
-      <h2 class="rise band-h">Your website isn't a brochure. It's the first employee a customer ever meets.</h2>
-      <p class="lead rise">If it's slow, confusing, or invisible to Google, you're losing business every day and never seeing the receipt. Still on WordPress? We migrate you off for good — no more plugins, patches, or 2 a.m. hacks.</p>
-      <a href="#audit" class="btn-accent rise">Show me what's wrong with mine →</a>
+      <div class="k rise">A few things I've built</div>
+      <h2 class="rise">Real software. Real sites. Shipped.</h2>
+      <div class="grid3">
+        <div class="cell rise"><div class="num">01</div><h3>YouTube for WordPress</h3><p>A plugin that imports and displays videos from a YouTube channel — built, shipped, and in real use.</p></div>
+        <div class="cell rise"><div class="num">02</div><h3>CloneWP</h3><p>Clone plugins or themes straight into your site from GitHub. A developer tool that solves a real, tedious problem.</p></div>
+        <div class="cell rise"><div class="num">03</div><h3>RoadMapWP</h3><p>User-driven product roadmaps — turning customer feedback into a prioritized plan you can actually ship against.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLOSING BAND -->
+  <div class="band" id="close">
+    <div class="wrap">
+      <div class="k rise" style="color:#8fa4ff">Let's build something</div>
+      <h2 class="rise band-h">You don't need an agency. You don't need a chatbot.<br>You need one capable human with an army behind him.</h2>
+      <p class="lead rise">Start by seeing the truth about your current site — free, in about fifteen seconds. Then we talk about what's next.</p>
+      <a href="#audit" class="btn-accent rise">Audit my site →</a>
     </div>
   </div>
 
   <footer>
     <div class="wrap ffx">
-      <div><strong>APEX</strong> · Branding &amp; Design</div>
-      <div>apexbranding.design · Built fast, on purpose.</div>
+      <div><strong>James Welbes</strong> · Human + AI, in that order</div>
+      <div>Cedar Rapids, Iowa · Built fast, on purpose.</div>
     </div>
   </footer>
 </Layout>
 
 <style is:global>
-  header{border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(255,255,255,.9);backdrop-filter:blur(8px);z-index:20}
-  .nav{display:flex;align-items:center;justify-content:space-between;height:66px}
-  .mark{display:flex;align-items:center;gap:9px;font-weight:700;font-size:19px;text-decoration:none}
-  .mark .dot{width:11px;height:11px;background:var(--accent)}
-  nav a{text-decoration:none;font-size:14px;font-weight:500;margin-left:26px;opacity:.75}
-  nav a:hover{opacity:1}
-  .btn{background:var(--ink);color:#fff!important;padding:9px 17px;border-radius:2px;opacity:1!important;font-weight:600}
-  .btn:hover{background:var(--accent)}
+  :root{ --bg:#0b0d12; --bg2:#111520; --card:#151a26; --line2:#232a3a; --txt:#eef1f6; --mut:#9aa4b6; }
+  body{background:var(--bg);color:var(--txt)}
+  ::selection{background:var(--accent);color:#fff}
 
-  .hero{padding:82px 0 20px;text-align:center}
-  .eyebrow{font-size:12px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--accent)}
-  h1{font-size:54px;line-height:1.04;font-weight:700;margin:18px auto 18px;max-width:720px}
-  .lead{font-size:19px;color:var(--mute);max-width:600px;margin:0 auto 32px}
-  .tool{display:flex;gap:8px;max-width:540px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:6px;padding:7px;box-shadow:0 14px 44px rgba(14,17,22,.07)}
-  .tool input{flex:1;border:none;outline:none;font-size:16px;padding:13px;background:transparent;color:var(--ink);font-family:var(--font-body)}
-  .tool button{background:var(--ink);color:#fff;border:none;font-weight:600;font-size:15px;padding:0 22px;border-radius:4px;cursor:pointer;white-space:nowrap;font-family:var(--font-body)}
-  .tool button:hover{background:var(--accent)}
+  header{border-bottom:1px solid var(--line2);position:sticky;top:0;background:rgba(11,13,18,.82);backdrop-filter:blur(10px);z-index:30}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:68px}
+  .mark{display:flex;align-items:center;gap:9px;font-weight:700;font-size:18px;text-decoration:none;letter-spacing:-.02em}
+  .mark .dot{width:11px;height:11px;background:var(--accent);border-radius:2px;box-shadow:0 0 14px var(--accent)}
+  .mark .mk-thin{font-weight:400;opacity:.6}
+  nav a{text-decoration:none;font-size:14px;font-weight:500;margin-left:26px;color:var(--mut)}
+  nav a:hover{color:var(--txt)}
+  .btn{background:#fff;color:var(--bg)!important;padding:9px 17px;border-radius:3px;font-weight:600}
+  .btn:hover{background:var(--accent);color:#fff!important}
+
+  .hl{color:var(--accent);text-shadow:0 0 34px rgba(26,79,255,.55)}
+
+  /* HERO */
+  .hero{position:relative;padding:70px 0 40px;overflow:hidden}
+  .glow{position:absolute;top:-160px;right:-120px;width:620px;height:620px;background:radial-gradient(circle,rgba(26,79,255,.28),transparent 62%);filter:blur(20px);pointer-events:none;z-index:0}
+  .hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:1.15fr .85fr;gap:30px;align-items:center}
+  .eyebrow{font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
+  h1{font-size:62px;line-height:1.02;font-weight:700;margin:16px 0 20px;letter-spacing:-.035em}
+  .lead{font-size:18px;color:var(--mut);max-width:560px;line-height:1.6}
+  .hero-copy .lead{margin-bottom:28px}
+  .hero-cta{display:flex;gap:12px;flex-wrap:wrap}
+  .btn-ghost{display:inline-block;border:1px solid var(--line2);color:var(--txt)!important;text-decoration:none;font-weight:600;font-size:14px;padding:11px 22px;border-radius:4px}
+  .btn-ghost:hover{border-color:var(--accent);color:#fff!important}
+  .hero-photo{position:relative}
+  .hero-photo img{width:100%;height:auto;display:block;filter:drop-shadow(0 26px 60px rgba(0,0,0,.6))}
+
+  /* THESIS */
+  .thesis{padding:90px 0;border-top:1px solid var(--line2)}
+  .th-h{max-width:760px}
+  .tri{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .tcard{background:var(--card);border:1px solid var(--line2);border-radius:12px;padding:26px}
+  .tcard.feature{border-color:rgba(26,79,255,.6);box-shadow:0 0 0 1px rgba(26,79,255,.35),0 22px 50px rgba(26,79,255,.14);background:linear-gradient(180deg,rgba(26,79,255,.08),var(--card))}
+  .tlabel{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:5px 10px;border-radius:20px;margin-bottom:16px}
+  .bad-l{color:#ff9b9b;background:rgba(220,38,38,.14)}
+  .warn-l{color:#f5c98a;background:rgba(217,119,6,.16)}
+  .good-l{color:#8ef0b0;background:rgba(22,163,74,.16)}
+  .tcard h3{font-size:20px;margin-bottom:10px}
+  .tcard p{font-size:14.5px;color:var(--mut);line-height:1.6}
+  .tcard em{color:var(--txt);font-style:normal;font-weight:600}
+
+  /* AUDIT */
+  .audit{padding:90px 0;border-top:1px solid var(--line2);text-align:center}
+  .audit h2{margin-left:auto;margin-right:auto}
+  .audit-lead{margin:0 auto 30px;text-align:center}
+  .tool{display:flex;gap:8px;max-width:540px;margin:0 auto;background:var(--card);border:1px solid var(--line2);border-radius:8px;padding:8px;box-shadow:0 18px 50px rgba(0,0,0,.4)}
+  .tool input{flex:1;border:none;outline:none;font-size:16px;padding:13px;background:transparent;color:var(--txt);font-family:var(--font-body)}
+  .tool input::placeholder{color:#6b7385}
+  .tool button{background:var(--accent);color:#fff;border:none;font-weight:600;font-size:15px;padding:0 22px;border-radius:5px;cursor:pointer;white-space:nowrap;font-family:var(--font-body)}
+  .tool button:hover{filter:brightness(1.12)}
   .tool button:disabled{opacity:.6;cursor:wait}
-  .hint{font-size:13px;color:var(--mute);margin-top:13px}
-  .hint.err{color:var(--bad)}
+  .hint{font-size:13px;color:var(--mut);margin-top:14px}
+  .hint.err{color:#ff9b9b}
 
-  .report{max-width:620px;margin:34px auto 0;text-align:left}
-  .rhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;flex-wrap:wrap;gap:6px}
+  .report{max-width:640px;margin:36px auto 0;text-align:left}
+  .rhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:6px}
   .rurl{font-weight:600;font-size:15px}
   .score{font-size:13px;font-weight:700}
-  .row{background:#fff;border:1px solid var(--line);border-radius:6px;padding:15px 17px;margin-bottom:9px;display:flex;gap:13px;align-items:flex-start}
+  .row{background:var(--card);border:1px solid var(--line2);border-radius:8px;padding:15px 17px;margin-bottom:9px;display:flex;gap:13px;align-items:flex-start}
   .icn{width:22px;height:22px;border-radius:50%;flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;margin-top:1px}
   .icn.bad{background:var(--bad)}.icn.warn{background:var(--warn)}.icn.good{background:var(--good)}
   .row h4{font-size:15px;margin-bottom:3px;font-family:var(--font-body);font-weight:600;letter-spacing:0}
-  .row p{font-size:13.5px;color:var(--mute)}
-  .cta-card{background:var(--ink);color:#fff;border-radius:6px;padding:22px;text-align:center;margin-top:16px}
-  .cta-card h3{font-size:18px;margin-bottom:6px}
+  .row p{font-size:13.5px;color:var(--mut)}
+  .cta-card{background:linear-gradient(180deg,rgba(26,79,255,.12),var(--card));border:1px solid rgba(26,79,255,.4);color:#fff;border-radius:10px;padding:24px;text-align:center;margin-top:18px}
+  .cta-card h3{font-size:19px;margin-bottom:7px}
 
-  /* --- deep audit sections --- */
+  /* deep audit sections */
   .cats{display:grid;grid-template-columns:1fr 1fr;gap:12px 20px;margin-bottom:22px}
   .cat-top{display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:5px}
   .cat-top b{font-size:14px}
-  .bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+  .bar{height:6px;background:var(--line2);border-radius:3px;overflow:hidden}
   .fill{height:100%;border-radius:3px;transition:width .7s ease}
-  .sec-lbl{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin:18px 0 11px}
+  .sec-lbl{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin:18px 0 11px}
   .sec-lbl span{font-weight:500;text-transform:none;letter-spacing:0;opacity:.75}
   .vitals{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
-  .vital{background:#fff;border:1px solid var(--line);border-radius:6px;padding:13px 12px;position:relative}
+  .vital{background:var(--card);border:1px solid var(--line2);border-radius:8px;padding:13px 12px;position:relative}
   .vdot{width:8px;height:8px;border-radius:50%;position:absolute;top:13px;right:12px}
   .vval{font-family:var(--font-display);font-size:20px;font-weight:700}
   .vname{font-size:12px;font-weight:600;margin-top:2px}
-  .vhelp{font-size:11.5px;color:var(--mute);margin-top:3px;line-height:1.35}
+  .vhelp{font-size:11.5px;color:var(--mut);margin-top:3px;line-height:1.35}
   .field{display:flex;flex-wrap:wrap;gap:8px}
-  .fchip{font-size:13px;background:#fff;border:1px solid var(--line);border-left-width:3px;border-radius:5px;padding:8px 12px;display:flex;align-items:center;gap:7px}
+  .fchip{font-size:13px;background:var(--card);border:1px solid var(--line2);border-left-width:3px;border-radius:6px;padding:8px 12px;display:flex;align-items:center;gap:7px}
   .fchip b{font-family:var(--font-display)}
   .fdot{width:7px;height:7px;border-radius:50%;display:inline-block}
-  .opp{background:#fff;border:1px solid var(--line);border-radius:6px;padding:12px 15px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .opp{background:var(--card);border:1px solid var(--line2);border-radius:8px;padding:12px 15px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:12px}
   .opp-t{font-size:14px;font-weight:500}
-  .opp-s{font-size:12.5px;font-weight:700;color:var(--accent);white-space:nowrap}
+  .opp-s{font-size:12.5px;font-weight:700;color:#7da2ff;white-space:nowrap}
   #rows{margin-top:18px}
-  @media(max-width:560px){.cats{grid-template-columns:1fr}.vitals{grid-template-columns:1fr 1fr}.opp{flex-direction:column;align-items:flex-start;gap:4px}}
-  .cta-card p{color:#aab2c0;font-size:14px;margin-bottom:15px}
-  .btn-accent{display:inline-block;background:var(--accent);color:#fff!important;text-decoration:none;font-weight:600;font-size:14px;padding:11px 22px;border-radius:4px}
-  .btn-accent:hover{filter:brightness(1.1)}
+  .cta-card p{color:#c3ccdb;font-size:14px;margin-bottom:15px}
+  .btn-accent{display:inline-block;background:var(--accent);color:#fff!important;text-decoration:none;font-weight:600;font-size:14px;padding:12px 24px;border-radius:5px;box-shadow:0 8px 24px rgba(26,79,255,.3)}
+  .btn-accent:hover{filter:brightness(1.12)}
 
-  .metrics{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:64px}
-  .metric{padding:30px 22px;border-right:1px solid var(--line)}
-  .metric:last-child{border-right:none}
-  .metric .n{font-family:var(--font-display);font-size:38px;font-weight:700}
-  .metric .l{font-size:13px;color:var(--mute);margin-top:3px}
+  /* ABOUT */
+  .about{padding:90px 0;border-top:1px solid var(--line2)}
+  .about-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:44px;align-items:center}
+  .about-photo{background:radial-gradient(circle at 50% 40%,rgba(26,79,255,.18),transparent 65%);border-radius:14px}
+  .about-photo img{width:100%;height:auto;display:block;filter:drop-shadow(0 20px 44px rgba(0,0,0,.5))}
+  .about-h{font-size:34px;margin:12px 0 20px}
+  .about-p{font-size:16px;color:var(--mut);line-height:1.7;margin-bottom:16px;max-width:560px}
+  .creds{list-style:none;margin-top:22px;display:grid;gap:11px}
+  .creds li{font-size:15px;color:var(--mut);padding-left:22px;position:relative}
+  .creds li:before{content:"→";position:absolute;left:0;color:var(--accent);font-weight:700}
+  .creds b{color:var(--txt)}
 
-  section{padding:82px 0}
-  .k{font-size:12px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--mute)}
-  h2{font-size:36px;font-weight:700;margin:12px 0 38px;max-width:640px}
-  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
-  .cell{background:#fff;padding:28px}
-  .cell .num{font-size:12px;font-weight:700;color:var(--accent);margin-bottom:13px}
-  .cell h3{font-size:18px;margin-bottom:9px}
-  .cell p{font-size:15px;color:var(--mute)}
+  section{padding:90px 0}
+  .k{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+  h2{font-size:38px;font-weight:700;margin:12px 0 40px;max-width:680px;letter-spacing:-.03em;line-height:1.1}
 
-  .band{background:var(--ink);color:#fff;padding:82px 0}
-  .band .band-h{color:#fff}
-  .band .lead{color:#aab2c0}
+  /* WORK */
+  .work{border-top:1px solid var(--line2)}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .cell{background:var(--card);border:1px solid var(--line2);border-radius:12px;padding:28px;transition:border-color .2s,transform .2s}
+  .cell:hover{border-color:rgba(26,79,255,.5);transform:translateY(-3px)}
+  .cell .num{font-size:12px;font-weight:700;color:var(--accent);margin-bottom:14px}
+  .cell h3{font-size:19px;margin-bottom:10px}
+  .cell p{font-size:14.5px;color:var(--mut);line-height:1.6}
 
-  footer{border-top:1px solid var(--line);padding:38px 0;font-size:13px;color:var(--mute)}
+  /* BAND */
+  .band{background:linear-gradient(180deg,var(--bg2),var(--bg));padding:96px 0;border-top:1px solid var(--line2);text-align:center}
+  .band .k{margin-bottom:0}
+  .band-h{margin-left:auto;margin-right:auto}
+  .band .lead{margin:0 auto 30px;text-align:center}
+
+  footer{border-top:1px solid var(--line2);padding:40px 0;font-size:13px;color:var(--mut)}
   .ffx{display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px}
+  footer strong{color:var(--txt)}
 
+  @media(max-width:860px){
+    .hero-grid,.about-grid{grid-template-columns:1fr}
+    .hero-photo{max-width:380px;margin:8px auto 0}
+    .about-photo{max-width:340px}
+    h1{font-size:46px}
+  }
   @media(max-width:720px){
-    h1{font-size:36px}h2{font-size:28px}
-    .metrics,.grid3{grid-template-columns:1fr}
-    .metric{border-right:none;border-bottom:1px solid var(--line)}
-    .tool{flex-direction:column}.tool button{padding:13px}
+    h1{font-size:38px}h2{font-size:28px}.about-h{font-size:26px}
+    .tri,.grid3{grid-template-columns:1fr}
+    .cats{grid-template-columns:1fr}.vitals{grid-template-columns:1fr 1fr}
+    .opp{flex-direction:column;align-items:flex-start;gap:4px}
+    .tool{flex-direction:column}.tool button{padding:14px}
     nav a:not(.btn){display:none}
   }
 </style>
