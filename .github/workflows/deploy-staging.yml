@@ -1,0 +1,44 @@
+name: Deploy staging to GitHub Pages
+on:
+  push:
+    branches: [staging]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build (with Pages base path)
+        env:
+          PAGES_BASE: /${{ github.event.repository.name }}/
+        run: npm run build
+      - name: Inject noindex into built HTML
+        run: |
+          find dist -name '*.html' -print0 \
+            | xargs -0 -I{} sed -i 's#<head>#<head>\n<meta name="robots" content="noindex, nofollow">#I' {}
+      - name: Blocking robots.txt
+        run: printf 'User-agent: *\nDisallow: /\n' > dist/robots.txt
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
