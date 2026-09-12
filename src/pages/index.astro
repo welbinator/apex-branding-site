@@ -1,0 +1,203 @@
+---
+import Layout from '../layouts/Layout.astro';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<Layout>
+  <header>
+    <div class="wrap nav">
+      <a class="mark" href={base + '/'}><span class="dot"></span>APEX</a>
+      <nav>
+        <a href="#process">Process</a>
+        <a href="#escape">Escape WP</a>
+        <a href="#audit" class="btn">Free audit</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO: tool-first -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="eyebrow">Free · No signup · Results in seconds</div>
+      <h1>Is your website quietly costing you customers?</h1>
+      <p class="lead">Paste your URL. We'll run a real performance check and show you exactly what's slow, broken, or invisible to Google — honestly, and for free.</p>
+      <form class="tool" id="auditForm">
+        <input id="url" type="text" inputmode="url" autocomplete="off" placeholder="yourbusiness.com" aria-label="Your website URL" />
+        <button type="submit" id="auditBtn">Audit my site</button>
+      </form>
+      <div class="hint" id="hint">No email required. We just want you to see the truth.</div>
+
+      <div id="report" class="report" hidden>
+        <div class="rhead">
+          <span class="rurl" id="rurl"></span>
+          <span class="score" id="score"></span>
+        </div>
+        <div id="rows"></div>
+        <div class="cta-card">
+          <h3>Want it fixed?</h3>
+          <p>We rebuild sites like this in days — fast, secure, mobile-first. Book a free 15-minute call.</p>
+          <a href="#escape" class="btn-accent">Book my call →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- METRICS -->
+  <div class="wrap">
+    <div class="metrics rise">
+      <div class="metric"><div class="n">0.4s</div><div class="l">Average load time we ship</div></div>
+      <div class="metric"><div class="n">100</div><div class="l">Lighthouse performance target</div></div>
+      <div class="metric"><div class="n">24</div><div class="l">Small businesses live &amp; managed</div></div>
+    </div>
+  </div>
+
+  <!-- PROCESS -->
+  <section id="process">
+    <div class="wrap">
+      <div class="k rise">How we work</div>
+      <h2 class="rise">A studio that runs like a system, not a freelancer.</h2>
+      <div class="grid3">
+        <div class="cell rise"><div class="num">01</div><h3>Honest audit first</h3><p>We show you exactly what's slow, broken, or invisible to Google — before you pay a dollar.</p></div>
+        <div class="cell rise"><div class="num">02</div><h3>Built on flat-file</h3><p>Astro &amp; Statamic, not WordPress. Nothing to hack, nothing to patch, nothing to slow it down.</p></div>
+        <div class="cell rise"><div class="num">03</div><h3>Your own command center</h3><p>Every client gets a private dashboard: staging preview, request pipeline, approval loop. Organized from day one.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MANIFESTO / ESCAPE -->
+  <div class="band" id="escape">
+    <div class="wrap">
+      <div class="k rise" style="color:#8fa4ff">Escape from WordPress</div>
+      <h2 class="rise band-h">Your website isn't a brochure. It's the first employee a customer ever meets.</h2>
+      <p class="lead rise">If it's slow, confusing, or invisible to Google, you're losing business every day and never seeing the receipt. Still on WordPress? We migrate you off for good — no more plugins, patches, or 2 a.m. hacks.</p>
+      <a href="#audit" class="btn-accent rise">Show me what's wrong with mine →</a>
+    </div>
+  </div>
+
+  <footer>
+    <div class="wrap ffx">
+      <div><strong>APEX</strong> · Branding &amp; Design</div>
+      <div>apexbranding.design · Built fast, on purpose.</div>
+    </div>
+  </footer>
+</Layout>
+
+<style>
+  header{border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(255,255,255,.9);backdrop-filter:blur(8px);z-index:20}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:66px}
+  .mark{display:flex;align-items:center;gap:9px;font-weight:700;font-size:19px;text-decoration:none}
+  .mark .dot{width:11px;height:11px;background:var(--accent)}
+  nav a{text-decoration:none;font-size:14px;font-weight:500;margin-left:26px;opacity:.75}
+  nav a:hover{opacity:1}
+  .btn{background:var(--ink);color:#fff!important;padding:9px 17px;border-radius:2px;opacity:1!important;font-weight:600}
+  .btn:hover{background:var(--accent)}
+
+  .hero{padding:82px 0 20px;text-align:center}
+  .eyebrow{font-size:12px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--accent)}
+  h1{font-size:54px;line-height:1.04;font-weight:700;margin:18px auto 18px;max-width:720px}
+  .lead{font-size:19px;color:var(--mute);max-width:600px;margin:0 auto 32px}
+  .tool{display:flex;gap:8px;max-width:540px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:6px;padding:7px;box-shadow:0 14px 44px rgba(14,17,22,.07)}
+  .tool input{flex:1;border:none;outline:none;font-size:16px;padding:13px;background:transparent;color:var(--ink);font-family:var(--font-body)}
+  .tool button{background:var(--ink);color:#fff;border:none;font-weight:600;font-size:15px;padding:0 22px;border-radius:4px;cursor:pointer;white-space:nowrap;font-family:var(--font-body)}
+  .tool button:hover{background:var(--accent)}
+  .tool button:disabled{opacity:.6;cursor:wait}
+  .hint{font-size:13px;color:var(--mute);margin-top:13px}
+  .hint.err{color:var(--bad)}
+
+  .report{max-width:620px;margin:34px auto 0;text-align:left}
+  .rhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;flex-wrap:wrap;gap:6px}
+  .rurl{font-weight:600;font-size:15px}
+  .score{font-size:13px;font-weight:700}
+  .row{background:#fff;border:1px solid var(--line);border-radius:6px;padding:15px 17px;margin-bottom:9px;display:flex;gap:13px;align-items:flex-start}
+  .icn{width:22px;height:22px;border-radius:50%;flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;margin-top:1px}
+  .icn.bad{background:var(--bad)}.icn.warn{background:var(--warn)}.icn.good{background:var(--good)}
+  .row h4{font-size:15px;margin-bottom:3px;font-family:var(--font-body);font-weight:600;letter-spacing:0}
+  .row p{font-size:13.5px;color:var(--mute)}
+  .cta-card{background:var(--ink);color:#fff;border-radius:6px;padding:22px;text-align:center;margin-top:16px}
+  .cta-card h3{font-size:18px;margin-bottom:6px}
+  .cta-card p{color:#aab2c0;font-size:14px;margin-bottom:15px}
+  .btn-accent{display:inline-block;background:var(--accent);color:#fff!important;text-decoration:none;font-weight:600;font-size:14px;padding:11px 22px;border-radius:4px}
+  .btn-accent:hover{filter:brightness(1.1)}
+
+  .metrics{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:64px}
+  .metric{padding:30px 22px;border-right:1px solid var(--line)}
+  .metric:last-child{border-right:none}
+  .metric .n{font-family:var(--font-display);font-size:38px;font-weight:700}
+  .metric .l{font-size:13px;color:var(--mute);margin-top:3px}
+
+  section{padding:82px 0}
+  .k{font-size:12px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--mute)}
+  h2{font-size:36px;font-weight:700;margin:12px 0 38px;max-width:640px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+  .cell{background:#fff;padding:28px}
+  .cell .num{font-size:12px;font-weight:700;color:var(--accent);margin-bottom:13px}
+  .cell h3{font-size:18px;margin-bottom:9px}
+  .cell p{font-size:15px;color:var(--mute)}
+
+  .band{background:var(--ink);color:#fff;padding:82px 0}
+  .band .band-h{color:#fff}
+  .band .lead{color:#aab2c0}
+
+  footer{border-top:1px solid var(--line);padding:38px 0;font-size:13px;color:var(--mute)}
+  .ffx{display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px}
+
+  @media(max-width:720px){
+    h1{font-size:36px}h2{font-size:28px}
+    .metrics,.grid3{grid-template-columns:1fr}
+    .metric{border-right:none;border-bottom:1px solid var(--line)}
+    .tool{flex-direction:column}.tool button{padding:13px}
+    nav a:not(.btn){display:none}
+  }
+</style>
+
+<script define:vars={{ base }}>
+  document.documentElement.classList.add('js');
+  // scroll reveal, fail-open
+  const risers = [...document.querySelectorAll('.rise')];
+  const io = new IntersectionObserver((es)=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{rootMargin:'0px 0px -8% 0px',threshold:0.08});
+  risers.forEach(el=>io.observe(el));
+  setTimeout(()=>risers.forEach(el=>el.classList.add('in')),2500);
+
+  // audit tool
+  const form=document.getElementById('auditForm');
+  const input=document.getElementById('url');
+  const btn=document.getElementById('auditBtn');
+  const hint=document.getElementById('hint');
+  const report=document.getElementById('report');
+  const rows=document.getElementById('rows');
+
+  function normalize(u){u=u.trim();if(!u)return '';if(!/^https?:\/\//i.test(u))u='https://'+u;return u;}
+  function icon(k){return k==='good'?'✓':k==='warn'?'~':'!';}
+  function render(data){
+    document.getElementById('rurl').textContent=data.url;
+    const s=document.getElementById('score');
+    s.textContent='Health score: '+data.score+' / 100';
+    s.style.color=data.score>=80?'var(--good)':data.score>=50?'var(--warn)':'var(--bad)';
+    rows.innerHTML=data.findings.map(f=>
+      `<div class="row"><div class="icn ${f.level}">${icon(f.level)}</div><div><h4>${f.title}</h4><p>${f.detail}</p></div></div>`
+    ).join('');
+    report.hidden=false;
+    report.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const url=normalize(input.value);
+    if(!url){hint.textContent='Enter a website address first.';hint.classList.add('err');return;}
+    hint.classList.remove('err');
+    btn.disabled=true;const orig=btn.textContent;btn.textContent='Analyzing…';
+    hint.textContent='Running a real performance check — this takes 10-20 seconds…';
+    try{
+      const res=await fetch(`${base}/api/audit?url=`+encodeURIComponent(url));
+      if(!res.ok) throw new Error('bad status '+res.status);
+      const data=await res.json();
+      if(data.error) throw new Error(data.error);
+      render(data);
+      hint.textContent='Analysis of a live, third-party performance report.';
+    }catch(err){
+      hint.textContent="Couldn't reach that site or the audit service is busy. Check the URL and try again.";
+      hint.classList.add('err');
+    }finally{
+      btn.disabled=false;btn.textContent=orig;
+    }
+  });
+</script>
