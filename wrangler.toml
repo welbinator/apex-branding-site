@@ -1,0 +1,11 @@
+name = "apex-branding-site"
+compatibility_date = "2026-07-29"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = "./dist"
+
+# Shared submissions DB — same D1 the apexbranding.design contact form writes to.
+# The $49/mo funnel (/api/lead) inserts with form_name = 'website-offer-49'.
+[[d1_databases]]
+binding = "DB"
+database_name = "apex-contact-submissions"
+database_id = "1d22749c-daa7-4c64-b39b-6b898a34181c"
