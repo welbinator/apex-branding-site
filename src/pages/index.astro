@@ -28,10 +28,8 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
           <a href="#thesis" class="btn-ghost">Why this works</a>
         </div>
       </div>
-      <div class="hero-photo rise">
-        <img src={base + '/img/james.webp'} width="1256" height="838" alt="James Welbes holding a cap that reads 'I love BS — Brand Strategy'" />
-      </div>
     </div>
+    <img class="hero-bg" src={base + '/img/james.webp'} width="1256" height="838" alt="James Welbes holding a cap that reads 'I love BS — Brand Strategy'" />
   </section>
 
   <!-- THESIS: the AI + human argument -->
@@ -160,18 +158,18 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   .hl{color:var(--accent);text-shadow:0 0 34px rgba(26,79,255,.55)}
 
   /* HERO */
-  .hero{position:relative;padding:70px 0 40px;overflow:hidden}
-  .glow{position:absolute;top:-160px;right:-120px;width:620px;height:620px;background:radial-gradient(circle,rgba(26,79,255,.28),transparent 62%);filter:blur(20px);pointer-events:none;z-index:0}
-  .hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:1.15fr .85fr;gap:30px;align-items:center}
+  .hero{position:relative;min-height:100vh;display:flex;align-items:center;padding:70px 0 40px;overflow:hidden}
+  .glow{position:absolute;top:-120px;right:-40px;width:720px;height:720px;background:radial-gradient(circle,rgba(26,79,255,.30),transparent 62%);filter:blur(20px);pointer-events:none;z-index:0}
+  .hero-bg{position:absolute;bottom:0;right:-70px;height:98%;width:auto;max-width:64%;object-fit:contain;object-position:bottom right;z-index:1;filter:drop-shadow(0 26px 70px rgba(0,0,0,.6));-webkit-mask-image:linear-gradient(to right,transparent,#000 22%);mask-image:linear-gradient(to right,transparent,#000 22%)}
+  .hero-grid{position:relative;z-index:2;width:100%}
+  .hero-copy{max-width:600px}
   .eyebrow{font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
-  h1{font-size:62px;line-height:1.02;font-weight:700;margin:16px 0 20px;letter-spacing:-.035em}
+  h1{font-size:66px;line-height:1.02;font-weight:700;margin:16px 0 20px;letter-spacing:-.035em}
   .lead{font-size:18px;color:var(--mut);max-width:560px;line-height:1.6}
   .hero-copy .lead{margin-bottom:28px}
   .hero-cta{display:flex;gap:12px;flex-wrap:wrap}
-  .btn-ghost{display:inline-block;border:1px solid var(--line2);color:var(--txt)!important;text-decoration:none;font-weight:600;font-size:14px;padding:11px 22px;border-radius:4px}
+  .btn-ghost{display:inline-block;border:1px solid var(--line2);color:var(--txt)!important;text-decoration:none;font-weight:600;font-size:14px;padding:11px 22px;border-radius:4px;background:rgba(11,13,18,.5)}
   .btn-ghost:hover{border-color:var(--accent);color:#fff!important}
-  .hero-photo{position:relative}
-  .hero-photo img{width:100%;height:auto;display:block;filter:drop-shadow(0 26px 60px rgba(0,0,0,.6))}
 
   /* THESIS */
   .thesis{padding:90px 0;border-top:1px solid var(--line2)}
@@ -274,8 +272,10 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   footer strong{color:var(--txt)}
 
   @media(max-width:860px){
-    .hero-grid,.about-grid{grid-template-columns:1fr}
-    .hero-photo{max-width:380px;margin:8px auto 0}
+    .hero{display:block;min-height:auto;padding:56px 0 40px}
+    .hero-bg{position:relative;right:auto;height:auto;width:82%;max-width:360px;margin:26px auto 0;display:block;-webkit-mask-image:none;mask-image:none}
+    .hero-copy{max-width:none}
+    .about-grid{grid-template-columns:1fr}
     .about-photo{max-width:340px}
     h1{font-size:46px}
   }
