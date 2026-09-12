@@ -5,7 +5,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 <Layout>
   <header>
     <div class="wrap nav">
-      <a class="mark" href={base + '/'}><span class="dot"></span>JAMES<span class="mk-thin">WELBES</span></a>
+      <a class="mark" href={base + '/'}>JAMES<span class="mk-thin">WELBES</span></a>
       <nav>
         <a href="#thesis">The idea</a>
         <a href="#about">About</a>
@@ -148,7 +148,6 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   header{border-bottom:1px solid var(--line2);position:sticky;top:0;background:rgba(11,13,18,.82);backdrop-filter:blur(10px);z-index:30}
   .nav{display:flex;align-items:center;justify-content:space-between;height:68px}
   .mark{display:flex;align-items:center;gap:9px;font-weight:700;font-size:18px;text-decoration:none;letter-spacing:-.02em}
-  .mark .dot{width:11px;height:11px;background:var(--accent);border-radius:2px;box-shadow:0 0 14px var(--accent)}
   .mark .mk-thin{font-weight:400;opacity:.6}
   nav a{text-decoration:none;font-size:14px;font-weight:500;margin-left:26px;color:var(--mut)}
   nav a:hover{color:var(--txt)}
@@ -194,7 +193,9 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   .tool input::placeholder{color:#6b7385}
   .tool button{background:var(--accent);color:#fff;border:none;font-weight:600;font-size:15px;padding:0 22px;border-radius:5px;cursor:pointer;white-space:nowrap;font-family:var(--font-body)}
   .tool button:hover{filter:brightness(1.12)}
-  .tool button:disabled{opacity:.6;cursor:wait}
+  .tool button:disabled{opacity:.85;cursor:wait}
+  .tool button .spin{display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px;margin-right:8px}
+  @keyframes spin{to{transform:rotate(360deg)}}
   .hint{font-size:13px;color:var(--mut);margin-top:14px}
   .hint.err{color:#ff9b9b}
 
@@ -366,7 +367,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     const url=normalize(input.value);
     if(!url){hint.textContent='Enter a website address first.';hint.classList.add('err');return;}
     hint.classList.remove('err');
-    btn.disabled=true;const orig=btn.textContent;btn.textContent='Analyzing…';
+    btn.disabled=true;const orig=btn.textContent;btn.innerHTML='<span class="spin"></span>Analyzing…';
     hint.textContent='Running a real performance check — this takes 10-20 seconds…';
     try{
       const res=await fetch(`${base}/api/audit?url=`+encodeURIComponent(url));
