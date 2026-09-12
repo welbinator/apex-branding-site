@@ -92,7 +92,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   <section id="about" class="about">
     <div class="wrap about-grid">
       <div class="about-photo rise">
-        <img src={base + '/img/james.webp'} width="1256" height="838" alt="James Welbes" loading="lazy" />
+        <img src={base + '/img/james2.webp'} width="1000" height="1250" alt="James Welbes at sunset over the water, cigar in hand" loading="lazy" />
       </div>
       <div class="rise">
         <div class="k" style="color:#8fa4ff">Who's actually in charge</div>
@@ -239,8 +239,8 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   /* ABOUT */
   .about{padding:90px 0;border-top:1px solid var(--line2)}
   .about-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:44px;align-items:center}
-  .about-photo{background:radial-gradient(circle at 50% 40%,rgba(26,79,255,.18),transparent 65%);border-radius:14px}
-  .about-photo img{width:100%;height:auto;display:block;filter:drop-shadow(0 20px 44px rgba(0,0,0,.5))}
+  .about-photo{border-radius:14px;overflow:hidden;border:1px solid var(--line2);box-shadow:0 24px 60px rgba(0,0,0,.5)}
+  .about-photo img{width:100%;height:auto;display:block}
   .about-h{font-size:34px;margin:12px 0 20px}
   .about-p{font-size:16px;color:var(--mut);line-height:1.7;margin-bottom:16px;max-width:560px}
   .creds{list-style:none;margin-top:22px;display:grid;gap:11px}
