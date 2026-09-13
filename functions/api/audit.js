@@ -29,14 +29,31 @@ export async function onRequestGet({ request, env }) {
   // Allow a fresh run on demand (?fresh=1 or ?nocache=1) to bypass the short
   // edge cache; otherwise cache PSI results only 30s to avoid hammering the API.
   const bust = reqUrl.searchParams.get('fresh') || reqUrl.searchParams.get('nocache');
-  let psi;
-  try {
-    const r = await fetch(api.toString(), bust ? { cf: { cacheTtl: 0 } } : { cf: { cacheTtl: 30 } });
-    if (!r.ok) return json({ error: 'audit-service-' + r.status }, 502);
-    psi = await r.json();
-  } catch (e) {
-    return json({ error: 'audit-fetch-failed' }, 502);
+  const cfOpts = bust ? { cf: { cacheTtl: 0 } } : { cf: { cacheTtl: 30 } };
+
+  // PSI is a busy shared Google service — transient 429/5xx and slow responses
+  // are normal. Retry a couple of times with backoff, and bound each attempt so
+  // one hung request can't stall the whole audit. This kills the intermittent
+  // "audit service is busy" error the user saw.
+  const fetchWithTimeout = async (u, opts, ms) => {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), ms);
+    try { return await fetch(u, { ...opts, signal: ctrl.signal }); }
+    finally { clearTimeout(t); }
+  };
+  let psi, lastErr = 'audit-fetch-failed';
+  for (let attempt = 0; attempt < 3; attempt++) {
+    if (attempt) await new Promise(r => setTimeout(r, 800 * attempt)); // 0, 0.8s, 1.6s
+    try {
+      const r = await fetchWithTimeout(api.toString(), cfOpts, 25000);
+      if (r.ok) { psi = await r.json(); break; }
+      lastErr = 'audit-service-' + r.status;
+      if (r.status < 500 && r.status !== 429) break; // 4xx (bad URL) won't fix on retry
+    } catch (e) {
+      lastErr = e.name === 'AbortError' ? 'audit-timeout' : 'audit-fetch-failed';
+    }
   }
+  if (!psi) return json({ error: lastErr }, 502);
 
   // ---- Tech stack + hosting (run alongside PSI, non-fatal) ----
   const [stack, hosting] = await Promise.all([
