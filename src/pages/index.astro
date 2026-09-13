@@ -86,6 +86,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         <div id="vitals" class="vitals-wrap"></div>
         <div id="field" class="field-wrap"></div>
         <div id="opps" class="opps-wrap"></div>
+        <div id="a11y" class="a11y-wrap"></div>
         <div id="stack" class="stack-wrap"></div>
         <div id="hosting" class="hosting-wrap"></div>
         <div id="rows"></div>
@@ -259,6 +260,16 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   .hrow:first-child{border-top:none}
   .hk{color:var(--mut)}
   .hv{font-weight:600;text-align:right;word-break:break-word}
+  .a11y-wrap{margin-top:8px}
+  .a11y-sum{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px solid var(--line2);border-radius:8px;padding:13px 15px}
+  .a11y-sum h4{font-family:var(--font-display);font-size:15px;margin:0 0 3px}
+  .a11y-sum p{font-size:12.5px;color:var(--mut);line-height:1.5;margin:0}
+  .a11y-list{margin-top:10px;display:flex;flex-direction:column;gap:8px}
+  .a11y-item{display:flex;gap:10px;align-items:flex-start;background:var(--card);border:1px solid var(--line2);border-left:3px solid var(--warn,#d97706);border-radius:6px;padding:10px 13px}
+  .a11y-dot{width:7px;height:7px;border-radius:50%;background:var(--warn,#d97706);margin-top:6px;flex:none}
+  .a11y-item b{font-family:var(--font-display);font-size:13.5px;font-weight:600;display:block;margin-bottom:2px}
+  .a11y-item span{font-size:12px;color:var(--mut);line-height:1.45}
+  .a11y-n{color:var(--warn,#d97706);font-weight:600}
   #rows{margin-top:18px}
   .cta-card p{color:#c3ccdb;font-size:14px;margin-bottom:15px}
   .btn-accent{display:inline-block;background:var(--accent);color:#fff!important;text-decoration:none;font-weight:600;font-size:14px;padding:12px 24px;border-radius:5px;box-shadow:0 8px 24px rgba(26,79,255,.3)}
@@ -396,7 +407,21 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         `<div class="opp"><div class="opp-t">${o.title}</div><div class="opp-s">${o.savings}</div></div>`).join('');
     } else ow.innerHTML='';
 
-    // Technology stack
+    // Accessibility (axe-core via Lighthouse)
+    const aw=document.getElementById('a11y');
+    const asum=data.a11ySummary;
+    if(asum){
+      let html=`<div class="sec-lbl">Accessibility <span>(axe-core / WCAG checks)</span></div>`+
+        `<div class="a11y-sum ${asum.level}"><div class="icn ${asum.level}">${icon(asum.level)}</div>`+
+        `<div><h4>${esc(asum.title)}</h4><p>${esc(asum.detail)}</p></div></div>`;
+      if((data.a11y||[]).length){
+        html+=`<div class="a11y-list">`+data.a11y.map(a=>
+          `<div class="a11y-item"><div class="a11y-dot"></div><div><b>${esc(a.title)}`+
+          `${a.count?` <span class="a11y-n">(${a.count} spot${a.count>1?'s':''})</span>`:''}</b>`+
+          `<span>${esc(a.detail)}</span></div></div>`).join('')+`</div>`;
+      }
+      aw.innerHTML=html;
+    } else aw.innerHTML='';
     const stw=document.getElementById('stack');
     if((data.stack||[]).length){
       stw.innerHTML=`<div class="sec-lbl">Technology stack <span>(detected on the live page)</span></div>`+

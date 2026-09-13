@@ -26,9 +26,12 @@ export async function onRequestGet({ request, env }) {
     api.searchParams.append('category', c));
   if (env.PSI_API_KEY) api.searchParams.set('key', env.PSI_API_KEY);
 
+  // Allow a fresh run on demand (?fresh=1 or ?nocache=1) to bypass the short
+  // edge cache; otherwise cache PSI results only 30s to avoid hammering the API.
+  const bust = reqUrl.searchParams.get('fresh') || reqUrl.searchParams.get('nocache');
   let psi;
   try {
-    const r = await fetch(api.toString(), { cf: { cacheTtl: 300 } });
+    const r = await fetch(api.toString(), bust ? { cf: { cacheTtl: 0 } } : { cf: { cacheTtl: 30 } });
     if (!r.ok) return json({ error: 'audit-service-' + r.status }, 502);
     psi = await r.json();
   } catch (e) {
@@ -135,11 +138,8 @@ export async function onRequestGet({ request, env }) {
   if (audits['document-title'] && (audits['document-title'].score ?? 0) < 1)
     findings.push({ level: 'warn', title: 'Missing or weak page title', detail: 'Your page title is the #1 thing Google and searchers read. It needs to be clear and keyword-aware.' });
 
-  if (audits['image-alt'] && (audits['image-alt'].score ?? 0) < 1)
-    findings.push({ level: 'warn', title: 'Images missing alt text', detail: 'Hurts accessibility and image SEO - Google can\'t "see" what your photos show.' });
-
-  if (audits['color-contrast'] && (audits['color-contrast'].score ?? 0) < 1)
-    findings.push({ level: 'warn', title: 'Low color contrast', detail: 'Some text is hard to read - fails accessibility standards and loses customers with low vision.' });
+  // (Image-alt + color-contrast now surfaced in the dedicated Accessibility
+  // section below, so they are intentionally not duplicated here.)
 
   if (audits['structured-data'] || audits['is-crawlable']) {
     if (audits['is-crawlable'] && (audits['is-crawlable'].score ?? 1) < 1)
@@ -157,11 +157,70 @@ export async function onRequestGet({ request, env }) {
   if (!findings.some(f => f.level === 'bad') && opportunities.length === 0)
     findings.push({ level: 'good', title: 'Technical foundation is solid', detail: 'The fundamentals hold up. The opportunity now is design, copy, and conversion - turning visitors into calls.' });
 
+  // ---- 5b. Accessibility checks (axe-core, via Lighthouse a11y category) ----
+  // Google's PSI already runs axe-core (Deque's WCAG engine). Surface every
+  // failing check generically, translated to plain-English business language.
+  const A11Y = {
+    'color-contrast': 'Text is hard to read against its background (low contrast). Fails WCAG and loses customers with low vision.',
+    'image-alt': 'Images are missing alt text. Screen readers and Google cannot tell what they show.',
+    'link-name': 'Some links have no readable text, so screen-reader users cannot tell where they go.',
+    'button-name': 'Some buttons have no accessible label, leaving screen-reader users guessing.',
+    'label': 'Form fields are missing labels, making the form hard to use with a screen reader.',
+    'document-title': 'The page is missing a proper title, which screen readers announce first.',
+    'html-has-lang': 'The page does not declare its language, so screen readers may mispronounce it.',
+    'html-lang-valid': 'The page language code is invalid.',
+    'meta-viewport': 'The viewport blocks zoom, so low-vision users cannot pinch to enlarge text.',
+    'heading-order': 'Headings skip levels, which breaks navigation for screen-reader users.',
+    'list': 'Lists are not marked up correctly, hurting screen-reader navigation.',
+    'listitem': 'List items sit outside a proper list, confusing assistive tech.',
+    'aria-required-attr': 'An interactive element is missing required ARIA attributes.',
+    'aria-valid-attr-value': 'An ARIA attribute has an invalid value.',
+    'aria-allowed-attr': 'An ARIA attribute is used where it is not allowed.',
+    'duplicate-id-aria': 'Duplicate IDs break ARIA references for assistive tech.',
+    'tabindex': 'Positive tabindex values create a confusing keyboard order.',
+    'td-headers-attr': 'Data-table cells are not linked to their headers.',
+    'valid-lang': 'A language attribute on the page is not valid.',
+    'frame-title': 'An embedded frame is missing a title.',
+    'input-image-alt': 'An image button is missing alt text.',
+    'object-alt': 'Embedded media is missing a text alternative.',
+    'aria-hidden-focus': 'A hidden element can still be focused, trapping keyboard users.',
+    'bypass': 'No skip link or landmarks, so keyboard users cannot jump past the nav.',
+  };
+  const a11y = [];
+  const a11yRefs = (cats['accessibility']?.auditRefs || []).map(r => r.id);
+  for (const id of a11yRefs) {
+    const a = audits[id];
+    if (!a) continue;
+    // Only binary pass/fail axe checks; skip manual/informative/not-applicable.
+    if (a.scoreDisplayMode !== 'binary' || a.score == null) continue;
+    if (a.score >= 0.9) continue;
+    const nodes = a.details?.items?.length;
+    a11y.push({
+      id,
+      level: 'warn',
+      title: a.title,
+      detail: A11Y[id] || (a.description || '').replace(/\s*\[Learn more[^\]]*\]\([^)]*\)\.?/i, '').trim(),
+      count: nodes || null,
+    });
+  }
+  const a11yScore = pct(cats['accessibility']?.score);
+  const a11ySummary = a11y.length === 0
+    ? { level: a11yScore >= 90 ? 'good' : 'warn',
+        title: a11yScore >= 90 ? 'No blocking accessibility issues found'
+                               : 'Accessibility could be improved',
+        detail: a11yScore >= 90
+          ? 'Automated checks (axe-core) pass. Note: automated tools catch ~30-50% of issues; a manual review still matters for full WCAG compliance.'
+          : 'Automated checks flagged room to improve. See items below.' }
+    : { level: 'warn', title: `${a11y.length} accessibility issue${a11y.length > 1 ? 's' : ''} to fix`,
+        detail: 'These come from axe-core (the WCAG engine behind Chrome and most audit tools). Automated checks catch ~30-50% of real issues, so a manual pass still helps.' };
+
+
   const score = Math.round(perfScore * 0.5 + seoScore * 0.25 +
     (categories[2].score ?? 0) * 0.125 + (categories[3].score ?? 0) * 0.125);
 
   return json({
     url: host, score, categories, vitals, field, hasField, opportunities, findings,
+    a11y, a11ySummary,
     stack, hosting,
     strategy: 'mobile',
   });
