@@ -296,7 +296,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     .opp{flex-direction:column;align-items:flex-start;gap:4px}
     .tool{flex-direction:column}.tool button{padding:14px}
     .nav-toggle{display:flex}
-    nav{position:absolute;top:68px;left:0;right:0;flex-direction:column;align-items:stretch;gap:0;background:rgba(11,13,18,.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--line2);padding:8px 0 14px;transform:translateY(-8px);opacity:0;pointer-events:none;transition:transform .22s ease,opacity .22s ease;max-height:calc(100vh - 68px);overflow-y:auto}
+    nav{display:flex;position:absolute;top:68px;left:0;right:0;flex-direction:column;align-items:stretch;gap:0;background:rgba(11,13,18,.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--line2);padding:8px 0 14px;transform:translateY(-8px);opacity:0;pointer-events:none;transition:transform .22s ease,opacity .22s ease;max-height:calc(100vh - 68px);overflow-y:auto}
     nav.open{transform:translateY(0);opacity:1;pointer-events:auto}
     nav a{margin:0;padding:14px 24px;font-size:16px;border-top:1px solid var(--line2)}
     nav a.btn{margin:12px 24px 2px;text-align:center;border-top:none}
