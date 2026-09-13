@@ -127,23 +127,23 @@ export async function onRequestGet({ request, env }) {
     findings.push({ level: 'bad', title: 'No secure HTTPS connection', detail: 'Browsers flag your site "Not Secure," Google buries it, and customers hesitate to trust it.' });
 
   if (audits['viewport'] && (audits['viewport'].score ?? 0) < 1)
-    findings.push({ level: 'bad', title: 'Not mobile-friendly', detail: 'No proper mobile viewport — layout breaks on phones, where most visitors are.' });
+    findings.push({ level: 'bad', title: 'Not mobile-friendly', detail: 'No proper mobile viewport - layout breaks on phones, where most visitors are.' });
 
   if (audits['meta-description'] && (audits['meta-description'].score ?? 0) < 1)
-    findings.push({ level: 'warn', title: 'Missing or weak meta description', detail: 'Google is guessing what your business does — that guess hurts your ranking.' });
+    findings.push({ level: 'warn', title: 'Missing or weak meta description', detail: 'Google is guessing what your business does - that guess hurts your ranking.' });
 
   if (audits['document-title'] && (audits['document-title'].score ?? 0) < 1)
     findings.push({ level: 'warn', title: 'Missing or weak page title', detail: 'Your page title is the #1 thing Google and searchers read. It needs to be clear and keyword-aware.' });
 
   if (audits['image-alt'] && (audits['image-alt'].score ?? 0) < 1)
-    findings.push({ level: 'warn', title: 'Images missing alt text', detail: 'Hurts accessibility and image SEO — Google can\'t "see" what your photos show.' });
+    findings.push({ level: 'warn', title: 'Images missing alt text', detail: 'Hurts accessibility and image SEO - Google can\'t "see" what your photos show.' });
 
   if (audits['color-contrast'] && (audits['color-contrast'].score ?? 0) < 1)
-    findings.push({ level: 'warn', title: 'Low color contrast', detail: 'Some text is hard to read — fails accessibility standards and loses customers with low vision.' });
+    findings.push({ level: 'warn', title: 'Low color contrast', detail: 'Some text is hard to read - fails accessibility standards and loses customers with low vision.' });
 
   if (audits['structured-data'] || audits['is-crawlable']) {
     if (audits['is-crawlable'] && (audits['is-crawlable'].score ?? 1) < 1)
-      findings.push({ level: 'bad', title: 'Page blocked from Google', detail: 'Your site is telling search engines not to index it — it may be invisible in search entirely.' });
+      findings.push({ level: 'bad', title: 'Page blocked from Google', detail: 'Your site is telling search engines not to index it - it may be invisible in search entirely.' });
   }
 
   // Total page weight (diagnostic)
@@ -151,11 +151,11 @@ export async function onRequestGet({ request, env }) {
   if (weight) {
     const lvl = weight > 4 * 1048576 ? 'bad' : weight > 2 * 1048576 ? 'warn' : 'good';
     if (lvl !== 'good')
-      findings.push({ level: lvl, title: `Heavy page: ${fmtBytes(weight)} to load`, detail: 'Large pages drain mobile data and load slowly on weaker connections — a real problem for local customers on their phones.' });
+      findings.push({ level: lvl, title: `Heavy page: ${fmtBytes(weight)} to load`, detail: 'Large pages drain mobile data and load slowly on weaker connections - a real problem for local customers on their phones.' });
   }
 
   if (!findings.some(f => f.level === 'bad') && opportunities.length === 0)
-    findings.push({ level: 'good', title: 'Technical foundation is solid', detail: 'The fundamentals hold up. The opportunity now is design, copy, and conversion — turning visitors into calls.' });
+    findings.push({ level: 'good', title: 'Technical foundation is solid', detail: 'The fundamentals hold up. The opportunity now is design, copy, and conversion - turning visitors into calls.' });
 
   const score = Math.round(perfScore * 0.5 + seoScore * 0.25 +
     (categories[2].score ?? 0) * 0.125 + (categories[3].score ?? 0) * 0.125);

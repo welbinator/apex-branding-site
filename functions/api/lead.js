@@ -66,7 +66,7 @@ async function notifyCommandCenter(env, lead) {
       headers: { 'Content-Type': 'application/json', 'X-CC-Signature': `t=${ts},v0=${sig}` },
       body,
     });
-  } catch (_) { /* CC down — lead already safe in D1 */ }
+  } catch (_) { /* CC down - lead already safe in D1 */ }
 }
 
 async function verifyTurnstile(token, secret, ip) {
