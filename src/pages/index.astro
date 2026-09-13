@@ -457,16 +457,28 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     if(!url){hint.textContent='Enter a website address first.';hint.classList.add('err');return;}
     hint.classList.remove('err');
     btn.disabled=true;const orig=btn.textContent;btn.innerHTML='<span class="spin"></span>Analyzing…';
-    hint.textContent='Running a real performance check - this takes 10-20 seconds…';
+    hint.textContent='Running a real performance check on Google\u2019s servers - this can take up to a minute…';
+    const fetchAudit=async(ms)=>{
+      const ctrl=new AbortController();const t=setTimeout(()=>ctrl.abort(),ms);
+      try{return await fetch(`${base}/api/audit?url=`+encodeURIComponent(url),{signal:ctrl.signal});}
+      finally{clearTimeout(t);}
+    };
     try{
-      const res=await fetch(`${base}/api/audit?url=`+encodeURIComponent(url));
-      if(!res.ok) throw new Error('bad status '+res.status);
-      const data=await res.json();
-      if(data.error) throw new Error(data.error);
+      let data,ok=false;
+      for(let attempt=0;attempt<2 && !ok;attempt++){
+        if(attempt) hint.textContent='The audit service was busy - retrying…';
+        try{
+          const res=await fetchAudit(75000);
+          if(!res.ok) throw new Error('bad status '+res.status);
+          data=await res.json();
+          if(data.error) throw new Error(data.error);
+          ok=true;
+        }catch(e){ if(attempt===1) throw e; }
+      }
       render(data);
       hint.textContent='Analysis of a live, third-party performance report.';
     }catch(err){
-      hint.textContent="Couldn't reach that site or the audit service is busy. Check the URL and try again.";
+      hint.textContent="Google\u2019s free audit service is busy right now (it rate-limits heavy use). Give it a moment and try again - your site is fine.";
       hint.classList.add('err');
     }finally{
       btn.disabled=false;btn.textContent=orig;
