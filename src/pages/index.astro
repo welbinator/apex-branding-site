@@ -6,9 +6,13 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   <header>
     <div class="wrap nav">
       <a class="mark" href={base + '/'}>JAMES<span class="mk-thin">WELBES</span></a>
-      <nav>
+      <button class="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav">
+        <span></span><span></span><span></span>
+      </button>
+      <nav id="site-nav">
         <a href="#thesis">The idea</a>
         <a href="#about">About</a>
+        <a href="#work">Work</a>
         <a href={base + '/website'}>$49/mo sites</a>
         <a href="#audit" class="btn">Free audit</a>
       </nav>
@@ -151,6 +155,11 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   .mark .mk-thin{font-weight:400;opacity:.6}
   nav a{text-decoration:none;font-size:14px;font-weight:500;margin-left:26px;color:var(--mut)}
   nav a:hover{color:var(--txt)}
+  .nav-toggle{display:none;flex-direction:column;justify-content:center;gap:5px;width:42px;height:42px;padding:0 9px;background:transparent;border:1px solid var(--line2);border-radius:9px;cursor:pointer}
+  .nav-toggle span{display:block;height:2px;width:100%;background:var(--txt);border-radius:2px;transition:transform .25s ease,opacity .2s ease}
+  .nav-toggle[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+  .nav-toggle[aria-expanded="true"] span:nth-child(2){opacity:0}
+  .nav-toggle[aria-expanded="true"] span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
   .btn{background:#fff;color:var(--bg)!important;padding:9px 17px;border-radius:3px;font-weight:600}
   .btn:hover{background:var(--accent);color:#fff!important}
 
@@ -286,12 +295,27 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     .cats{grid-template-columns:1fr}.vitals{grid-template-columns:1fr 1fr}
     .opp{flex-direction:column;align-items:flex-start;gap:4px}
     .tool{flex-direction:column}.tool button{padding:14px}
-    nav a:not(.btn){display:none}
+    .nav-toggle{display:flex}
+    nav{position:absolute;top:68px;left:0;right:0;flex-direction:column;align-items:stretch;gap:0;background:rgba(11,13,18,.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--line2);padding:8px 0 14px;transform:translateY(-8px);opacity:0;pointer-events:none;transition:transform .22s ease,opacity .22s ease;max-height:calc(100vh - 68px);overflow-y:auto}
+    nav.open{transform:translateY(0);opacity:1;pointer-events:auto}
+    nav a{margin:0;padding:14px 24px;font-size:16px;border-top:1px solid var(--line2)}
+    nav a.btn{margin:12px 24px 2px;text-align:center;border-top:none}
   }
 </style>
 
 <script define:vars={{ base }}>
   document.documentElement.classList.add('js');
+  // mobile nav toggle
+  (function(){
+    const btn=document.querySelector('.nav-toggle'), menu=document.getElementById('site-nav');
+    if(btn&&menu){
+      const set=(o)=>{menu.classList.toggle('open',o);btn.setAttribute('aria-expanded',o?'true':'false');btn.setAttribute('aria-label',o?'Close menu':'Open menu');};
+      btn.addEventListener('click',()=>set(!menu.classList.contains('open')));
+      menu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>set(false)));
+      document.addEventListener('keydown',e=>{if(e.key==='Escape')set(false);});
+      document.addEventListener('click',e=>{if(menu.classList.contains('open')&&!menu.contains(e.target)&&!btn.contains(e.target))set(false);});
+    }
+  })();
   // scroll reveal, fail-open
   const risers = [...document.querySelectorAll('.rise')];
   const io = new IntersectionObserver((es)=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{rootMargin:'0px 0px -8% 0px',threshold:0.08});
