@@ -82,6 +82,8 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         <div id="vitals" class="vitals-wrap"></div>
         <div id="field" class="field-wrap"></div>
         <div id="opps" class="opps-wrap"></div>
+        <div id="stack" class="stack-wrap"></div>
+        <div id="hosting" class="hosting-wrap"></div>
         <div id="rows"></div>
         <div class="cta-card">
           <h3>Want it fixed — properly?</h3>
@@ -241,6 +243,15 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   .opp{background:var(--card);border:1px solid var(--line2);border-radius:8px;padding:12px 15px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:12px}
   .opp-t{font-size:14px;font-weight:500}
   .opp-s{font-size:12.5px;font-weight:700;color:#7da2ff;white-space:nowrap}
+  .stack{display:flex;flex-wrap:wrap;gap:8px}
+  .tchip{background:var(--card);border:1px solid var(--line2);border-radius:6px;padding:7px 11px;line-height:1.25}
+  .tchip b{font-family:var(--font-display);font-size:13.5px;font-weight:600;display:block}
+  .tchip span{font-size:11px;color:var(--mut);letter-spacing:.02em}
+  .host{background:var(--card);border:1px solid var(--line2);border-radius:8px;overflow:hidden}
+  .hrow{display:flex;justify-content:space-between;gap:14px;padding:9px 14px;font-size:13.5px;border-top:1px solid var(--line2)}
+  .hrow:first-child{border-top:none}
+  .hk{color:var(--mut)}
+  .hv{font-weight:600;text-align:right;word-break:break-word}
   #rows{margin-top:18px}
   .cta-card p{color:#c3ccdb;font-size:14px;margin-bottom:15px}
   .btn-accent{display:inline-block;background:var(--accent);color:#fff!important;text-decoration:none;font-weight:600;font-size:14px;padding:12px 24px;border-radius:5px;box-shadow:0 8px 24px rgba(26,79,255,.3)}
@@ -332,6 +343,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
   function normalize(u){u=u.trim();if(!u)return '';if(!/^https?:\/\//i.test(u))u='https://'+u;return u;}
   function icon(k){return k==='good'?'✓':k==='warn'?'~':'!';}
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
   function lvlColor(k){return k==='good'?'var(--good)':k==='warn'?'var(--warn)':'var(--bad)';}
 
   function render(data){
@@ -377,7 +389,28 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         `<div class="opp"><div class="opp-t">${o.title}</div><div class="opp-s">${o.savings}</div></div>`).join('');
     } else ow.innerHTML='';
 
-    // Pass/fail findings
+    // Technology stack
+    const stw=document.getElementById('stack');
+    if((data.stack||[]).length){
+      stw.innerHTML=`<div class="sec-lbl">Technology stack <span>(detected on the live page)</span></div>`+
+        `<div class="stack">`+data.stack.map(t=>
+        `<div class="tchip"><b>${esc(t.name)}</b><span>${esc(t.category)}</span></div>`).join('')+`</div>`;
+    } else stw.innerHTML='';
+
+    // Hosting / DNS
+    const hw=document.getElementById('hosting');
+    const hd=data.hosting;
+    if(hd && (hd.ips||[]).length){
+      const rows=[];
+      if(hd.provider) rows.push(['Hosted on', esc(hd.provider)]);
+      if(hd.network && hd.network!==hd.provider) rows.push(['Network', esc(hd.network)]);
+      if(hd.country) rows.push(['Region', esc(hd.country)]);
+      if((hd.cnames||[]).length) rows.push(['DNS points to', esc(hd.cnames.join(' → '))]);
+      rows.push(['IP address', esc(hd.ips.slice(0,2).join(', '))]);
+      hw.innerHTML=`<div class="sec-lbl">Hosting &amp; DNS <span>(where the site lives)</span></div>`+
+        `<div class="host">`+rows.map(r=>
+        `<div class="hrow"><span class="hk">${r[0]}</span><span class="hv">${r[1]}</span></div>`).join('')+`</div>`;
+    } else hw.innerHTML='';
     document.getElementById('rows').innerHTML=(data.findings||[]).map(f=>
       `<div class="row"><div class="icn ${f.level}">${icon(f.level)}</div><div><h4>${f.title}</h4><p>${f.detail}</p></div></div>`
     ).join('');

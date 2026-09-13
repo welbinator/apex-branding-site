@@ -35,6 +35,12 @@ export async function onRequestGet({ request, env }) {
     return json({ error: 'audit-fetch-failed' }, 502);
   }
 
+  // ---- Tech stack + hosting (run alongside PSI, non-fatal) ----
+  const [stack, hosting] = await Promise.all([
+    detectStack(target).catch(() => []),
+    detectHosting(host).catch(() => null),
+  ]);
+
   const lh = psi.lighthouseResult;
   if (!lh) return json({ error: 'no-lighthouse-data' }, 502);
 
@@ -156,6 +162,148 @@ export async function onRequestGet({ request, env }) {
 
   return json({
     url: host, score, categories, vitals, field, hasField, opportunities, findings,
+    stack, hosting,
     strategy: 'mobile',
   });
+}
+
+// ---- Technology stack detection ----
+// Fingerprints from the site's own HTML + response headers. Honest: only
+// reports what's actually observable, never guesses.
+async function detectStack(target) {
+  const res = await fetch(target, {
+    redirect: 'follow',
+    headers: { 'user-agent': 'Mozilla/5.0 (compatible; SiteAuditBot/1.0)' },
+  });
+  const headers = res.headers;
+  const html = (await res.text()).slice(0, 250000);
+  const found = new Map(); // name -> category (dedupe)
+  const add = (name, category) => { if (!found.has(name)) found.set(name, category); };
+
+  const h = (k) => (headers.get(k) || '').toLowerCase();
+  const has = (re) => re.test(html);
+
+  // --- Server / platform from headers ---
+  const server = h('server');
+  const powered = h('x-powered-by');
+  if (server.includes('cloudflare')) add('Cloudflare', 'CDN / Proxy');
+  if (server.includes('nginx')) add('Nginx', 'Web server');
+  if (server.includes('apache')) add('Apache', 'Web server');
+  if (server.includes('litespeed')) add('LiteSpeed', 'Web server');
+  if (server.includes('microsoft-iis')) add('IIS', 'Web server');
+  if (server.includes('vercel') || h('x-vercel-id')) add('Vercel', 'Hosting / Platform');
+  if (server.includes('netlify') || h('x-nf-request-id')) add('Netlify', 'Hosting / Platform');
+  if (h('x-served-by').includes('cache') || h('via').includes('varnish')) add('Varnish / Fastly', 'CDN / Cache');
+  if (powered.includes('php')) add('PHP', 'Language');
+  if (powered.includes('asp.net')) add('ASP.NET', 'Framework');
+  if (powered.includes('express')) add('Express', 'Framework');
+  if (powered.includes('next')) add('Next.js', 'Framework');
+  if (h('x-shopify-stage') || server.includes('shopify')) add('Shopify', 'E-commerce / CMS');
+  if (h('x-github-request-id')) add('GitHub Pages', 'Hosting / Platform');
+  if (h('x-wix-request-id') || has(/static\.wixstatic\.com/)) add('Wix', 'Website builder');
+  if (h('x-squarespace') || has(/static1\.squarespace\.com|squarespace-cdn/)) add('Squarespace', 'Website builder');
+
+  // --- CMS / frameworks from HTML ---
+  if (has(/wp-content\/|wp-includes\/|<meta[^>]+WordPress/i)) add('WordPress', 'CMS');
+  if (has(/\/sites\/default\/files\/|Drupal\.settings|drupal\.js/i)) add('Drupal', 'CMS');
+  if (has(/\/media\/jui\/|Joomla!|\/components\/com_/i)) add('Joomla', 'CMS');
+  if (has(/cdn\.shopify\.com|shopify\.theme/i)) add('Shopify', 'E-commerce / CMS');
+  if (has(/data-astro-|\/_astro\//i)) add('Astro', 'Framework');
+  if (has(/__NEXT_DATA__|\/_next\//i)) add('Next.js', 'Framework');
+  if (has(/id="__nuxt"|\/_nuxt\//i)) add('Nuxt', 'Framework');
+  if (has(/ng-version=|ng-app=/i)) add('Angular', 'Framework');
+  if (has(/data-reactroot|react(?:-dom)?(?:\.production)?\.min\.js/i)) add('React', 'Library');
+  if (has(/data-v-app|vue(?:\.runtime)?(?:\.global)?\.(?:prod\.)?js/i)) add('Vue', 'Library');
+  if (has(/gatsby-|___gatsby/i)) add('Gatsby', 'Framework');
+  if (has(/svelte-[0-9a-z]{5,}/i)) add('Svelte', 'Framework');
+  if (has(/jquery(?:-|\.)[0-9]|jquery\.min\.js/i)) add('jQuery', 'Library');
+  if (has(/cdn\.jsdelivr\.net\/npm\/bootstrap|class="[^"]*\b(?:col-md-|navbar-|btn-primary)\b/i)) add('Bootstrap', 'CSS framework');
+  if (has(/\b(?:tw-|md:flex|text-gray-\d|bg-\w+-\d00)\b|tailwind/i)) add('Tailwind CSS', 'CSS framework');
+  if (has(/elementor-|elementor\/assets/i)) add('Elementor', 'Page builder');
+  if (has(/wpforms|contact-form-7|gravityforms/i)) add('WP Forms plugin', 'Plugin');
+  if (has(/woocommerce/i)) add('WooCommerce', 'E-commerce');
+
+  // --- Analytics / tags ---
+  if (has(/googletagmanager\.com\/gtm/i)) add('Google Tag Manager', 'Tag manager');
+  if (has(/gtag\/js|www\.google-analytics\.com|G-[A-Z0-9]{6,}/)) add('Google Analytics', 'Analytics');
+  if (has(/static\.cloudflareinsights\.com/)) add('Cloudflare Analytics', 'Analytics');
+  if (has(/connect\.facebook\.net|fbq\(/)) add('Meta Pixel', 'Marketing');
+  if (has(/hotjar\.com|hj\(/)) add('Hotjar', 'Analytics');
+  if (has(/plausible\.io/)) add('Plausible', 'Analytics');
+
+  // --- Fonts / hosting hints ---
+  if (has(/fonts\.googleapis\.com|fonts\.gstatic\.com/)) add('Google Fonts', 'Fonts');
+
+  return Array.from(found, ([name, category]) => ({ name, category }));
+}
+
+// ---- Hosting / DNS lookup ----
+// Resolves the hostname (Cloudflare DoH) then asks RDAP who owns the IP block,
+// so we can honestly name the hosting network. All best-effort.
+async function detectHosting(host) {
+  const doh = async (name, type) => {
+    const r = await fetch(
+      `https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(name)}&type=${type}`,
+      { headers: { accept: 'application/dns-json' } }
+    );
+    if (!r.ok) return null;
+    return r.json();
+  };
+
+  // Follow CNAME chain, collect A records
+  const a = await doh(host, 'A');
+  const answers = (a?.Answer || []);
+  const cnames = answers.filter(x => x.type === 5).map(x => x.data.replace(/\.$/, ''));
+  const ips = answers.filter(x => x.type === 1).map(x => x.data);
+  if (!ips.length) return { host, ips: [], cnames, org: null, network: null, country: null };
+
+  // Who owns the IP → hosting org/network, via Team Cymru's DNS-based
+  // IP-to-ASN service (queried over DoH, so no HTTP rate limits). Two hops:
+  // reversed-IP.origin.asn.cymru.com → ASN+country, then ASN.asn.cymru.com → org.
+  let org = null, network = null, country = null;
+  try {
+    const ip = ips[0];
+    const rev = ip.split('.').reverse().join('.');
+    const o = await doh(`${rev}.origin.asn.cymru.com`, 'TXT');
+    const otxt = (o?.Answer || []).map(x => x.data.replace(/^"|"$/g, ''))[0];
+    if (otxt) {
+      // "13335 | 104.21.64.0/20 | US | arin | 2014-03-28"
+      const parts = otxt.split('|').map(s => s.trim());
+      const asn = parts[0];
+      country = parts[2] || null;
+      if (asn) {
+        network = 'AS' + asn;
+        const n = await doh(`AS${asn}.asn.cymru.com`, 'TXT');
+        const ntxt = (n?.Answer || []).map(x => x.data.replace(/^"|"$/g, ''))[0];
+        if (ntxt) {
+          // "13335 | US | arin | 2010-07-14 | CLOUDFLARENET - Cloudflare, Inc., US"
+          const np = ntxt.split('|').map(s => s.trim());
+          org = (np[4] || '').replace(/,\s*[A-Z]{2}$/, '').trim() || null;
+        }
+      }
+    }
+  } catch { /* best effort */ }
+
+  // Clean the raw ASN org ("CLOUDFLARENET - Cloudflare, Inc." → "Cloudflare, Inc.")
+  const orgClean = org && org.includes(' - ') ? org.split(' - ').slice(1).join(' - ').trim() : org;
+
+  // Friendly provider name from CNAME / org text
+  const hint = (cnames.join(' ') + ' ' + (org || '') + ' ' + (network || '')).toLowerCase();
+  let provider = orgClean || null;
+  const map = [
+    ['pages.dev', 'Cloudflare Pages'], ['cloudflare', 'Cloudflare'],
+    ['vercel', 'Vercel'], ['netlify', 'Netlify'], ['github.io|github', 'GitHub'],
+    ['amazonaws|aws|ec2|amazon', 'Amazon AWS'], ['google|gcp|1e100', 'Google Cloud'],
+    ['azure|microsoft', 'Microsoft Azure'], ['digitalocean', 'DigitalOcean'],
+    ['hetzner', 'Hetzner'], ['ovh', 'OVH'], ['linode', 'Linode'], ['akamai', 'Akamai'],
+    ['fastly', 'Fastly'], ['squarespace', 'Squarespace'], ['wix', 'Wix'],
+    ['shopify', 'Shopify'], ['godaddy|secureserver', 'GoDaddy'],
+    ['bluehost|hostgator|newfold', 'Bluehost / Newfold'], ['siteground', 'SiteGround'],
+    ['wpengine', 'WP Engine'], ['kinsta', 'Kinsta'],
+  ];
+  for (const [re, label] of map) {
+    if (new RegExp(re).test(hint)) { provider = label; break; }
+  }
+
+  return { host, ips, cnames, org: orgClean, network, country, provider };
 }
