@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 // Podcast appearances. Add a new object here for each new show.
@@ -51,19 +52,7 @@ const episodes = [
 <Layout
   title="Podcast Appearances | James Welbes"
   description="Podcast appearances by James Welbes on AI, WordPress, web development, and the future of building for the web.">
-  <header>
-    <div class="wrap nav">
-      <a class="mark" href={base + '/'}>JAMES<span class="mk-thin">WELBES</span></a>
-      <nav>
-        <a href={base + '/#thesis'}>The idea</a>
-        <a href={base + '/#about'}>About</a>
-        <a href={base + '/#work'}>Work</a>
-        <a href={base + '/website'}>$49/mo sites</a>
-        <a href={base + '/podcasts'}>Podcasts</a>
-        <a href={base + '/#audit'} class="btn">Free audit</a>
-      </nav>
-    </div>
-  </header>
+  <Header />
 
   <section class="pod-hero">
     <div class="wrap">
