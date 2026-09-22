@@ -54,7 +54,14 @@ const episodes = [
   <header>
     <div class="wrap nav">
       <a class="mark" href={base + '/'}>JAMES<span class="mk-thin">WELBES</span></a>
-      <a href={base + '/'} class="btn">Home</a>
+      <nav>
+        <a href={base + '/#thesis'}>The idea</a>
+        <a href={base + '/#about'}>About</a>
+        <a href={base + '/#work'}>Work</a>
+        <a href={base + '/website'}>$49/mo sites</a>
+        <a href={base + '/podcasts'}>Podcasts</a>
+        <a href={base + '/#audit'} class="btn">Free audit</a>
+      </nav>
     </div>
   </header>
 
@@ -104,16 +111,16 @@ const episodes = [
   <style>
     .pod-hero{padding:96px 0 32px}
     .pod-hero .eyebrow{display:inline-block;font-family:var(--font-display);font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:14px}
-    .pod-hero h1{font-size:clamp(2.4rem,6vw,4rem);line-height:1.02;margin-bottom:18px}
-    .pod-hero .lead{font-size:1.15rem;color:var(--mute);max-width:60ch}
+    .pod-hero h1{font-size:clamp(2.4rem,6vw,4rem);line-height:1.02;margin-bottom:18px;color:var(--txt)}
+    .pod-hero .lead{font-size:1.15rem;color:var(--mut);max-width:60ch}
 
     .pod-grid-wrap{padding:24px 0 96px}
     .pod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px}
 
-    .pod-card{display:flex;flex-direction:column;background:var(--paper);border:1px solid var(--line);border-radius:16px;overflow:hidden;text-decoration:none;color:inherit;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
-    .pod-card:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(14,17,22,.10);border-color:color-mix(in srgb,var(--accent) 40%,var(--line))}
+    .pod-card{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line2);border-radius:16px;overflow:hidden;text-decoration:none;color:inherit;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+    .pod-card:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(0,0,0,.35);border-color:color-mix(in srgb,var(--accent) 55%,var(--line2))}
 
-    .pod-logo{display:flex;align-items:center;justify-content:center;height:120px;padding:24px;background:var(--soft);border-bottom:1px solid var(--line)}
+    .pod-logo{display:flex;align-items:center;justify-content:center;height:120px;padding:24px;background:#fff;border-bottom:1px solid var(--line2)}
     .pod-logo img{max-height:64px;max-width:80%;width:auto;object-fit:contain}
     .pod-logo--cover{padding:0;height:150px;background:#f2b8c0}
     .pod-logo--cover img{max-height:none;max-width:none;width:100%;height:100%;object-fit:contain}
@@ -122,14 +129,14 @@ const episodes = [
     .pod-body{display:flex;flex-direction:column;gap:10px;padding:22px 22px 20px;flex:1}
     .pod-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
     .pod-show{font-family:var(--font-display);font-weight:600;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;color:var(--accent)}
-    .pod-ep{font-size:.78rem;color:var(--mute);background:var(--soft);border:1px solid var(--line);padding:2px 8px;border-radius:999px}
-    .pod-title{font-size:1.18rem;line-height:1.25;margin:0}
-    .pod-blurb{font-size:.95rem;color:var(--mute);line-height:1.55;margin:0}
-    .pod-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:auto;padding-top:8px;font-size:.85rem;color:var(--mute)}
+    .pod-ep{font-size:.78rem;color:var(--mut);background:var(--bg2);border:1px solid var(--line2);padding:2px 8px;border-radius:999px}
+    .pod-title{font-size:1.18rem;line-height:1.25;margin:0;color:var(--txt)}
+    .pod-blurb{font-size:.95rem;color:var(--mut);line-height:1.55;margin:0}
+    .pod-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:auto;padding-top:8px;font-size:.85rem;color:var(--mut)}
     .pod-listen{font-family:var(--font-display);font-weight:600;color:var(--accent);white-space:nowrap}
 
-    footer{border-top:1px solid var(--line);padding:32px 0;margin-top:0}
-    footer .ffx{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;color:var(--mute);font-size:.9rem}
+    footer{border-top:1px solid var(--line2);padding:32px 0;margin-top:0}
+    footer .ffx{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;color:var(--mut);font-size:.9rem}
 
     @media (max-width:560px){
       .pod-hero{padding:80px 0 24px}
