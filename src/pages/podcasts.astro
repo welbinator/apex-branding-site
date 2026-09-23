@@ -17,6 +17,16 @@ const episodes = [
     url: 'https://wpbuilds.com/2026/04/30/466-james-welbes-on-ai-wordpress-and-new-opportunities/',
   },
   {
+    show: 'Seriously, BUD?',
+    logo: '/img/podcasts/seriously-bud.webp',
+    fill: true,
+    title: 'James Welbes on Cigars, Navy Life, WordPress, and Raising a Family in Iowa',
+    date: 'February 2026',
+    host: 'with Bud Kraus',
+    blurb: "A candid, wide-ranging chat that has almost nothing to do with WordPress. Cigars as an end-of-day ritual, life in Cedar Rapids, Navy years spent circling the globe, fostering and adopting two daughters, faith and friendship, and where AI might take digital work next. The human side of the WordPress community.",
+    url: 'https://seriouslybud.com/episode/james-welbes/',
+  },
+  {
     show: 'WP-Tonic',
     logo: '/img/podcasts/wp-tonic.png',
     title: 'What is the best website builder for WordPress in 2026?',
@@ -67,7 +77,7 @@ const episodes = [
       <div class="pod-grid">
         {episodes.map((ep) => (
           <a class="pod-card rise" href={ep.url} target="_blank" rel="noopener">
-            <div class={ep.cover ? 'pod-logo pod-logo--cover' : 'pod-logo'}>
+            <div class={ep.cover ? 'pod-logo pod-logo--cover' : ep.fill ? 'pod-logo pod-logo--fill' : 'pod-logo'}>
               {ep.logo
                 ? <img src={base + ep.logo} alt={ep.show + ' logo'} loading="lazy" decoding="async" />
                 : <span class="pod-logo-text">{ep.show}</span>}
@@ -113,6 +123,8 @@ const episodes = [
     .pod-logo img{max-height:64px;max-width:80%;width:auto;object-fit:contain}
     .pod-logo--cover{padding:0;height:150px;background:#f2b8c0}
     .pod-logo--cover img{max-height:none;max-width:none;width:100%;height:100%;object-fit:contain}
+    .pod-logo--fill{padding:0;height:150px}
+    .pod-logo--fill img{max-height:none;max-width:none;width:100%;height:100%;object-fit:cover}
     .pod-logo-text{font-family:var(--font-display);font-weight:700;font-size:1.4rem;letter-spacing:-.02em;color:var(--ink)}
 
     .pod-body{display:flex;flex-direction:column;gap:10px;padding:22px 22px 20px;flex:1}
